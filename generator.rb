@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 #
 require 'json'
-require 'active_support/all'
 
 begin
 	file = File.open(ARGV[0], "r")

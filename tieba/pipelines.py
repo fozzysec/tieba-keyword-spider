@@ -15,12 +15,9 @@ class TiebaPipeline(object):
     @classmethod
     def from_crawler(cls, crawler):
         filename = crawler.settings.get('FILENAME')
-        if filename is not None:
-            return cls(
-                    filename = crawler.settings.get('FILENAME')
-                    )
-        else:
-            return cls(filename = "item.jl")
+        return cls(
+                filename = crawler.settings.get('FILENAME')
+                )
 
     def open_spider(self, spider):
         self.file = open(self.filename, 'wb')

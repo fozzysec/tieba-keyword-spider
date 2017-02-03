@@ -27,8 +27,8 @@ class TiebaSpider(scrapy.Spider):
         for div in div_spost:
 
             thread_url = div.xpath('.//span[@class="p_title"]/a[@class="bluelink"]/@href').extract_first()
-            thread_title = BeautifulSoup(div.xpath('.//span[@class="p_title"]/a').extract_first()).get_text()
-            thread_preview = BeautifulSoup(div.xpath('.//div[@class="p_content"]').extract_first()).get_text()
+            thread_title = BeautifulSoup(div.xpath('.//span[@class="p_title"]/a').extract_first(), 'lxml').get_text()
+            thread_preview = BeautifulSoup(div.xpath('.//div[@class="p_content"]').extract_first(), 'lxml').get_text()
             thread_author = div.xpath('.//a[not(@data-fid)]/font/text()').extract_first()
             thread_tieba = div.xpath('.//a[@class="p_forum"]/font/text()').extract_first()
             thread_date = div.xpath('.//font[@class="p_green p_date"]/text()').extract_first()

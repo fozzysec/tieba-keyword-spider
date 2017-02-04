@@ -5,7 +5,6 @@ use Cwd;
 use utf8;
 use File::stat;
 use Time::localtime;
-#use Data::Dumper qw(Dumper);
 
 use open ':std', ':encoding(UTF-8)';
 
@@ -17,14 +16,15 @@ print("<meta charset=\"utf-8\" />\n");
 print("<title>Table of items</title>\n");
 print("</head>\n");
 my $wc = `wc -l < $ARGV[0]`;
+chomp;
+$wc =~ s/\s//g;
 print("$wc results generated at ". ctime(stat($fh)->ctime) . "<br>\n");
 print("<table border='1'>\n");
 print("<tr><th>标题</th><th>作者</th><th>贴吧</th><th>预览</th><th>日期</th><th>地址</th></tr>\n");
 
-while(!eof($fh)){
-	my $line = readline($fh);
-	chomp($line);
-	$json = JSON->new->utf8->decode($line);
+while(<$fh>){
+	chomp;
+	$json = JSON->new->utf8->decode($_);
 	print("<tr>\n");
 	print("<td>". $json->{'title'}.	"</td>\n");
 	print("<td>". $json->{'author'}.	"</td>\n");

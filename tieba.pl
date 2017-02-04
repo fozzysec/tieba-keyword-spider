@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-open($fh, '<:encoding(utf-8)', "/etc/tieba.txt");
+open($fh, '<:encoding(utf-8)', "/etc/tieba.txt") or die "failed to open file";
 while(! eof($fh)){
 	chomp($file = readline($fh));
 	chomp($keyword = readline($fh));

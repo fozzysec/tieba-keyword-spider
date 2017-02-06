@@ -1,3 +1,4 @@
 *.jl
 __pycache__/
 *.py[cod]
+maillist.conf

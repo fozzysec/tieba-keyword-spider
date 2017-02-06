@@ -5,11 +5,12 @@ use File::Basename;
 
 use open ':std', ':encoding(UTF-8)';
 
-$maillist = 'maillist.conf';
-$generator = 'generator.pl';
-$sendmail = 'sendmail.pl';
+my $maillist;
+my $generator;
+my $sendmail;
+my $tmpdir;
 
-$tmpdir = '/tmp/';
+require "config.pl";
 
 $path = dirname(abs_path(__FILE__)).'/';
 open(my $FH, '<:encoding(UTF-8)', $path.$maillist) or die "failed open file.";
@@ -23,4 +24,4 @@ while(<$FH>){
 	system("/usr/bin/env perl $path$generator $tmpdir$file > $tmpdir$file.html");
 }
 close($FH);
-#system("/usr/bin/env perl ".$path.$sendmail);
+system("/usr/bin/env perl ".$path.$sendmail);

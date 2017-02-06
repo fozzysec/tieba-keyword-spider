@@ -7,7 +7,9 @@ use Encode qw(decode_utf8);
 
 use open ':std', ':encoding(UTF-8)';
 
-$maillist = 'maillist.conf';
+require "./config.pl";
+
+my $maillist = $g_maillist;
 
 $path = dirname(abs_path(__FILE__)).'/';
 open(my $fh, '>>:encoding(UTF-8)', $path.$maillist) or die "failed open file";

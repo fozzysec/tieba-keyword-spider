@@ -3,6 +3,8 @@
 use Cwd qw(abs_path);
 use File::Basename;
 
+use open ':std', ':encoding(UTF-8)';
+
 $maillist = 'maillist.conf';
 
 sub sendmail{
@@ -12,12 +14,11 @@ sub sendmail{
 }
 
 $path = dirname(abs_path(__FILE__)).'/';
-open(my $FH, '<:encoding(UTF-8)', $path.$maillist);
+open(my $FH, '<:encoding(UTF-8)', $path.$maillist) or die "failed open file";
 
-while(! eof($FH)){
-	my $line = readline($FH);
-	chomp($line);
-	my @array = split(/:/, $line);
+while(<$FH>){
+	chomp;
+	my @array = split(/:/, $_);
 	sendmail(@array);
 }
 close($FH);

@@ -5,10 +5,10 @@ use File::Basename;
 
 use open ':std', ':encoding(UTF-8)';
 
-my $maillist;
-my $tmpdir;
-
 require "config.pl";
+
+my $maillist = $g_maillist;
+my $tmpdir = $g_tmpdir;
 
 sub sendmail{
 	my @conf = @_;

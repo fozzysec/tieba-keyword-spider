@@ -1,4 +1,4 @@
-$maillist = 'maillist.conf';
-$generator = 'generator.pl';
-$sendmail = 'sendmail.pl';
-$tmpdir = '/tmp/';
+$g_maillist = 'maillist.conf';
+$g_generator = 'generator.pl';
+$g_sendmail = 'sendmail.pl';
+$g_tmpdir = '/tmp/';

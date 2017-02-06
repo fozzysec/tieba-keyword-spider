@@ -5,12 +5,12 @@ use File::Basename;
 
 use open ':std', ':encoding(UTF-8)';
 
-my $maillist;
-my $generator;
-my $sendmail;
-my $tmpdir;
 
-require "config.pl";
+require "./config.pl";
+my $maillist = $g_maillist;
+my $generator = $g_generator;
+my $sendmail = $g_sendmail;
+my $tmpdir = $g_tmpdir;
 
 $path = dirname(abs_path(__FILE__)).'/';
 open(my $FH, '<:encoding(UTF-8)', $path.$maillist) or die "failed open file.";
@@ -23,5 +23,6 @@ while(<$FH>){
 	system("cd $path&&scrapy crawl tieba -s FILENAME=$tmpdir$file -a keywords='$keyword'");
 	system("/usr/bin/env perl $path$generator $tmpdir$file > $tmpdir$file.html");
 }
+
 close($FH);
 system("/usr/bin/env perl ".$path.$sendmail);

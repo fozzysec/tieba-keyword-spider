@@ -23,4 +23,4 @@ while(<$FH>){
 	system("/usr/bin/env perl $path$generator $tmpdir$file > $tmpdir$file.html");
 }
 close($FH);
-system("/usr/bin/env perl ".$path.$sendmail);
+#system("/usr/bin/env perl ".$path.$sendmail);

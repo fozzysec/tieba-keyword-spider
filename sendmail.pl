@@ -6,11 +6,15 @@ use File::Basename;
 use open ':std', ':encoding(UTF-8)';
 
 $maillist = 'maillist.conf';
+$tmpdir = '/tmp/';
 
 sub sendmail{
 	my @conf = @_;
-	my $cmd = "mutt -e 'set content_type=text/html' -s '$conf[0]' $conf[1] < /tmp/$conf[2].html";
-	system($cmd);	
+	my $mails = $conf[1];
+	foreach(split(/\|/, $mails)){
+		my $cmd = "mutt -e 'set content_type=text/html' -s '$conf[0]' $_ < $tmpdir$conf[2].html";
+		system($cmd);	
+	}
 }
 
 $path = dirname(abs_path(__FILE__)).'/';

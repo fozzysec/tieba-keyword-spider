@@ -5,7 +5,9 @@ use File::Basename;
 
 use open ':std', ':encoding(UTF-8)';
 
-require "config.pl";
+$path = dirname(abs_path(__FILE__)).'/';
+
+require $path."config.pl";
 
 my $maillist = $g_maillist;
 my $tmpdir = $g_tmpdir;
@@ -19,7 +21,6 @@ sub sendmail{
 	}
 }
 
-$path = dirname(abs_path(__FILE__)).'/';
 open(my $FH, '<:encoding(UTF-8)', $path.$maillist) or die "failed open file";
 
 while(<$FH>){

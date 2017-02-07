@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
+from binascii import crc32
 from scrapy.exceptions import DropItem
 
 # Define your item pipelines here
@@ -39,8 +40,9 @@ class DuplicatesPipeline(object):
         self.thread_set = set()
     
     def process_item(self, item, spider):
-        if item['preview'] in self.thread_set:
+        checksum = crc32(item['preview'].encode('utf-8'))
+        if checksum in self.thread_set:
             raise DropItem("Duplicated content from %s" % item['author'])
         else:
-            self.thread_set.add(item['preview'])
+            self.thread_set.add(checksum)
             return item

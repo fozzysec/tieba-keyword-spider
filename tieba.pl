@@ -38,8 +38,8 @@ while(<$FH>){
 
 		$curr_pid = $pid[$counter - 1] = fork();
 		if($pid[$counter - 1] == 0){
-			system("from counter $counter, cd $path&&scrapy crawl tieba -s FILENAME=$tmpdir$file -a keywords='$keyword'");
-			system("from counter $counter, /usr/bin/env perl $path$generator $tmpdir$file > $tmpdir$file.html");
+			system("cd $path&&scrapy crawl tieba -s FILENAME=$tmpdir$file -a keywords='$keyword'");
+			system("/usr/bin/env perl $path$generator $tmpdir$file > $tmpdir$file.html");
 			last;
 		}
 		else{

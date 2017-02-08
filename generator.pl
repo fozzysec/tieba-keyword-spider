@@ -14,7 +14,7 @@ print("<html>\n");
 print("<head>\n");
 print("<meta charset=\"utf-8\" />\n");
 print("<title>Table of items</title>\n");
-print("</head>\n");
+print("</head><body>\n");
 my $wc = `wc -l < $ARGV[0]`;
 chomp;
 $wc =~ s/\s//g;
@@ -35,4 +35,4 @@ while(<$fh>){
 	print("</tr>\n");
 }
 close($fh);
-print("</table></html>\n");
+print("</table></body></html>\n");

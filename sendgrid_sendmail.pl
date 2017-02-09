@@ -57,8 +57,8 @@ sub gmail_sendmail{
 	my $to = $conf[1];
 
 	my $cmd = "mutt -e 'set content_type=text/html' -s '$subject' $to < $tmpdir$conf[2].html";
-	#system($cmd);
-	say($cmd);
+	system($cmd);
+	#say($cmd);
 }
 
 sub sendgrid_sendmail{
@@ -77,8 +77,8 @@ sub sendgrid_sendmail{
 	close(HTML);
 	close(SENDGRID);
 	my $cmd = "msmtp -a sendgrid --from fozzy\@fozzy.co $to < $tmpdir$conf[2].sendgrid.html";
-	#system("$cmd");
-	say($cmd);
+	system("$cmd");
+	#say($cmd);
 }
 
 init();

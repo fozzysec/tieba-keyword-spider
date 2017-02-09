@@ -29,6 +29,7 @@ my $curr_pid = 1;
 
 while(<$FH>){
 	chomp;
+	next if /^(\s*(#.*)?)?$/;
 	my @array = split(/:/, $_);
 	my $keyword = $array[0];
 	my $file = $array[2];

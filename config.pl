@@ -2,4 +2,6 @@ $g_maillist = 'maillist.conf';
 $g_generator = 'generator.pl';
 $g_sendmail = 'sendmail.pl';
 $g_tmpdir = '/tmp/';
-$g_workers = 4;
+$g_workers = 6;
+$g_sendgrid_enabled = 1;
+$g_gmail_enabled = 1;

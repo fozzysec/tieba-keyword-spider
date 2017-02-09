@@ -25,6 +25,7 @@ open(my $FH, '<:encoding(UTF-8)', $path.$maillist) or die "failed open file";
 
 while(<$FH>){
 	chomp;
+	next if /^(\s*(#.*)?)?$/;
 	my @array = split(/:/, $_);
 	sendmail(@array);
 }

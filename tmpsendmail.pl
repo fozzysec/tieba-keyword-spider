@@ -32,10 +32,11 @@ open(my $FH, '<:encoding(UTF-8)', $path.$maillist) or die "failed open file";
 
 while(<$FH>){
 	chomp;
+	next if /^(\s*(#.*)?)?$/;
 	my @array = split(/:/, $_);
 	if($array[1] =~ m/.*\@qq\.com.*/){
-		sendmail(@array);
 		say join(':', @array);
+		sendmail(@array);
 	}
 }
 close($FH);

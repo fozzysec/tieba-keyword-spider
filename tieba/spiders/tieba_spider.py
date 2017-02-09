@@ -2,7 +2,9 @@ import scrapy
 
 from tieba.items import ThreadItem
 from urllib.parse import quote_plus
-from bs4 import BeautifulSoup
+import lxml.html
+import html
+import re
 
 tieba_url = "http://tieba.baidu.com/f/search/res?ie=utf-8&qw=%s"
 tieba_base_url = "http://tieba.baidu.com"
@@ -27,8 +29,29 @@ class TiebaSpider(scrapy.Spider):
         for div in div_spost:
 
             thread_url = div.xpath('.//span[@class="p_title"]/a[@class="bluelink"]/@href').extract_first()
-            thread_title = BeautifulSoup(div.xpath('.//span[@class="p_title"]/a').extract_first(), 'lxml').get_text()
-            thread_preview = BeautifulSoup(div.xpath('.//div[@class="p_content"]').extract_first(), 'lxml').get_text()
+
+            s = ''
+            title = lxml.html.fromstring(div.xpath('.//span[@class="p_title"]/a').extract_first())
+            for node in title.xpath('node()'):
+                if isinstance(node, str):
+                    s+=node
+                else:
+                    s+=lxml.html.tostring(node, with_tail=False).decode('utf-8')
+            s = re.sub('<em>', '<font color="red">', s)
+            s = re.sub('</em>', '</font>', s)
+            thread_title = html.unescape(s)
+
+            s = ''
+            preview = lxml.html.fromstring(div.xpath('.//div[@class="p_content"]').extract_first())
+            for node in preview.xpath('node()'):
+                if isinstance(node, str):
+                    s+=node
+                else:
+                    s+=lxml.html.tostring(node, with_tail=False).decode('utf-8')
+            s = re.sub('<em>', '<font color="red">', s)
+            s = re.sub('</em>', '</font>', s)
+            thread_preview = html.unescape(s)
+
             thread_author = div.xpath('.//a[not(@data-fid)]/font/text()').extract_first()
             thread_tieba = div.xpath('.//a[@class="p_forum"]/font/text()').extract_first()
             thread_date = div.xpath('.//font[@class="p_green p_date"]/text()').extract_first()

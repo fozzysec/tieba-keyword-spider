@@ -45,6 +45,9 @@ sub sendmail_wrapper{
 		elsif($gmail_enabled == 1){
 			gmail_sendmail($conf[0], $_, $conf[2]);
 		}
+		elsif($sendgrid_enabled == 1 && $gmail_enabled == 0){
+			sendgrid_sendmail($conf[0], $_, $conf[2]);
+		}
 		else{
 			die("No sendmail method enabled");
 		}

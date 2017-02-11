@@ -24,7 +24,7 @@ sub init{
 	say("Current hour: $hour, setting sendmail shedule");
 	say("Global config:\t\tsendgrid_enabled: $sendgrid_enabled\tgmail_enabled: $gmail_enabled");
 	#second mail per day
-	if($hour >= 21 && $hour <= 23 && $sendgrid_enabled){
+	if($hour >= 0 && $hour <= 4 && $sendgrid_enabled){
 		$sendgrid_enabled = 1;
 		$gmail_enabled = 1;
 	}

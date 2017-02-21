@@ -24,13 +24,15 @@ sub init{
 	say("Current hour: $hour, setting sendmail shedule");
 	say("Global config:\t\tsendgrid_enabled: $sendgrid_enabled\tgmail_enabled: $gmail_enabled");
 	#second mail per day
-	if($hour >= 0 && $hour <= 4 && $sendgrid_enabled){
-		$sendgrid_enabled = 1;
-		$gmail_enabled = 1;
-	}
-	else{
-		$sendgrid_enabled = 0;
-		$gmail_enabled = 1;
+	if($sendgrid_enabled){
+		if($hour >= 11 && $hour <= 22){
+			$sendgrid_enabled = 0;
+			$gmail_enabled = 1;
+		}
+		else{
+			$sendgrid_enabled = 1;
+			$gmail_enabled = 1;
+		}
 	}
 	say("Adjusted config:\tsendgrid_enabled: $sendgrid_enabled\tgmail_enabled: $gmail_enabled");
 }
@@ -39,7 +41,10 @@ sub sendmail_wrapper{
 	my @conf = @_;
 	my $mails = $conf[1];
 	foreach(split(/\|/, $mails)){
-		if($_ =~ m/.*\@qq\.com/ && $sendgrid_enabled == 1){
+#		if($_ =~ m/.*\@qq\.com/ && $sendgrid_enabled == 1){
+#			sendgrid_sendmail($conf[0], $_, $conf[2]);
+#		}
+		if($sendgrid_enabled == 1){
 			sendgrid_sendmail($conf[0], $_, $conf[2]);
 		}
 		elsif($gmail_enabled == 1){

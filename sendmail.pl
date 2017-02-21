@@ -76,7 +76,7 @@ sub sendgrid_sendmail{
 
 	chomp(my $encoded_subject = encode_base64($subject));
 	my $mime_subject = "=?utf-8?B?$encoded_subject?=";
-	my $header = "Subject: =$mime_subject\nContent-Type: text/html; charset=utf-8\nMIME-Version: 1.0\nX-SMTPAPI: {\"asm_group_id\":2123, \"to\": [\"$to\"]}\n\n";
+	my $header = "Subject: $mime_subject\nContent-Type: text/html; charset=utf-8\nMIME-Version: 1.0\nX-SMTPAPI: {\"asm_group_id\":2123, \"to\": [\"$to\"]}\n\n";
 	open(HTML, '<:encoding(UTF-8)', "$tmpdir$conf[2].html") or die "can not open origin html file $tmpdir$conf[2].html";
 	open(SENDGRID, '>:encoding(UTF-8)', "$tmpdir$conf[2].sendgrid.html") or die "can not create sendgrid html";
 	my @origin_html = <HTML>;

@@ -31,26 +31,32 @@ class TiebaSpider(scrapy.Spider):
             thread_url = div.xpath('.//span[@class="p_title"]/a[@class="bluelink"]/@href').extract_first()
 
             s = ''
-            title = lxml.html.fromstring(div.xpath('.//span[@class="p_title"]/a').extract_first())
-            for node in title.xpath('node()'):
-                if isinstance(node, str):
-                    s+=node
-                else:
-                    s+=lxml.html.tostring(node, with_tail=False).decode('utf-8')
-            s = re.sub('<em>', '<font color="red">', s)
-            s = re.sub('</em>', '</font>', s)
-            thread_title = html.unescape(s)
+            thread_title = ''
+            title_node = div.xpath('.//span[@class="p_title"]/a').extract_first()
+            if title_node is not None:
+                title = lxml.html.fromstring(title_node)
+                for node in title.xpath('node()'):
+                    if isinstance(node, str):
+                        s+=node
+                    else:
+                        s+=lxml.html.tostring(node, with_tail=False).decode('utf-8')
+                s = re.sub('<em>', '<font color="red">', s)
+                s = re.sub('</em>', '</font>', s)
+                thread_title = html.unescape(s)
 
             s = ''
-            preview = lxml.html.fromstring(div.xpath('.//div[@class="p_content"]').extract_first())
-            for node in preview.xpath('node()'):
-                if isinstance(node, str):
-                    s+=node
-                else:
-                    s+=lxml.html.tostring(node, with_tail=False).decode('utf-8')
-            s = re.sub('<em>', '<font color="red">', s)
-            s = re.sub('</em>', '</font>', s)
-            thread_preview = html.unescape(s)
+            thread_preview = ''
+            preview_node = div.xpath('.//div[@class="p_content"]').extract_first()
+            if preview_node is not None:
+                preview = lxml.html.fromstring(preview_node)
+                for node in preview.xpath('node()'):
+                    if isinstance(node, str):
+                        s+=node
+                    else:
+                        s+=lxml.html.tostring(node, with_tail=False).decode('utf-8')
+                s = re.sub('<em>', '<font color="red">', s)
+                s = re.sub('</em>', '</font>', s)
+                thread_preview = html.unescape(s)
 
             thread_author = div.xpath('.//a[not(@data-fid)]/font/text()').extract_first()
             thread_tieba = div.xpath('.//a[@class="p_forum"]/font/text()').extract_first()
@@ -62,9 +68,9 @@ class TiebaSpider(scrapy.Spider):
             item['url'] = thread_url
             item['title'] = thread_title
             item['preview'] = thread_preview
-            item['author'] = thread_author
-            item['tieba'] = thread_tieba
-            item['date'] = thread_date
+            item['author'] = '' if thread_author == None else thread_author
+            item['tieba'] = '' if thread_tieba == None else thread_tieba
+            item['date'] = '' if thread_date == None else thread_date
             yield item
 
         next_page = response.xpath('//a[@class="next"]/@href').extract_first()

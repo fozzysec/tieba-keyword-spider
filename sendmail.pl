@@ -18,6 +18,7 @@ my $tmpdir = $g_tmpdir;
 my $sendgrid_enabled = $g_sendgrid_enabled;
 my $gmail_enabled = $g_gmail_enabled;
 
+open(my $LOGGER, '>>:encoding(UTF-8)', "/var/log/tieba.log") or die "unable to open log file.";
 sub init{
 	my @currenttime = localtime(time);
 	my $hour = $currenttime[2];
@@ -77,8 +78,16 @@ sub sendgrid_sendmail{
 	chomp(my $encoded_subject = encode_base64($subject));
 	my $mime_subject = "=?utf-8?B?$encoded_subject?=";
 	my $header = "Subject: $mime_subject\nContent-Type: text/html; charset=utf-8\nMIME-Version: 1.0\nX-SMTPAPI: {\"asm_group_id\":2123, \"to\": [\"$to\"]}\n\n";
-	open(HTML, '<:encoding(UTF-8)', "$tmpdir$conf[2].html") or die "can not open origin html file $tmpdir$conf[2].html";
-	open(SENDGRID, '>:encoding(UTF-8)', "$tmpdir$conf[2].sendgrid.html") or die "can not create sendgrid html";
+	open(HTML, '<:encoding(UTF-8)', "$tmpdir$conf[2].html");
+	if(!HTML){
+		print $LOGGER join(' ', localtime(time)).": can not open origin html file $tmpdir$conf[2].html";
+		return;
+	}
+	open(SENDGRID, '>:encoding(UTF-8)', "$tmpdir$conf[2].sendgrid.html");
+	if(!SENDGRID){
+		print $LOGGER join(' ', localtime(time)).": can not create sendgrid html $conf[2]";
+		return;
+	}
 	my @origin_html = <HTML>;
 	print SENDGRID $header;
 	print SENDGRID @origin_html;
@@ -99,3 +108,4 @@ while(<$FH>){
 	sendmail_wrapper(@array);
 }
 close($FH);
+close($LOGGER);

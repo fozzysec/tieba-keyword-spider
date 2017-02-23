@@ -24,6 +24,8 @@ USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
 
+LOG_LEVEL = 'INFO'
+
 RETRY_ENABLED = True
 RETRY_TIMES = 5
 DOWNLOAD_TIMEOUT = 30

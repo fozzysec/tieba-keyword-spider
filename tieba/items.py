@@ -23,4 +23,10 @@ class ThreadItem(scrapy.Item):
     keywords = scrapy.Field()
 
 class NoneItem(scrapy.Item):
-    pass
+    url = scrapy.Field()
+    title = scrapy.Field()
+    preview = scrapy.Field()
+    author = scrapy.Field()
+    tieba = scrapy.Field()
+    date = scrapy.Field()
+    keywords = scrapy.Field()

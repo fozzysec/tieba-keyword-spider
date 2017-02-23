@@ -4,11 +4,17 @@ import urllib.request
 import lxml.html
 import html
 import re
+import logging
+from functools import wraps
+from scrapy.utils.python import get_func_args
+from scrapy import Request
 from lxml import etree
 import http.cookiejar
 from binascii import crc32
 from scrapy.exceptions import DropItem
 from scrapy.exceptions import CloseSpider
+
+from tieba.items import ThreadItem, NoneItem
 
 # Define your item pipelines here
 #
@@ -35,6 +41,7 @@ class TiebaPipeline(object):
             self.file.close()
 
     def process_item(self, item, spider):
+
         data = dict(item)
         del data['keywords']
         line = json.dumps(data) + "\n"
@@ -46,6 +53,9 @@ class DuplicatesPipeline(object):
         self.thread_set = set()
     
     def process_item(self, item, spider):
+        if isinstance(item, NoneItem):
+            return item
+
         checksum = crc32(item['preview'].encode('utf-8'))
         if checksum in self.thread_set:
             raise DropItem("Duplicated content from %s" % item['author'])
@@ -53,12 +63,21 @@ class DuplicatesPipeline(object):
             self.thread_set.add(checksum)
             return item
 
+def callback_args(f):
+    args = get_func_args(f)[2:]
+    @wraps(f)
+    def wrapper(spider, response):
+        return f(spider, response,
+                **{k:response.meta[k] for k in args if k in response.meta})
+    return wrapper
+
 class FilterPipeline(object):
-    def __init__(self, filterlist, filteruserrank):
+    def __init__(self, filterlist, filteruserrank, crawler):
         self.cookiejar = http.cookiejar.CookieJar()
         self.filter_opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(self.cookiejar))
         self.filterlistfilename = filterlist
         self.filteruserrank = filteruserrank
+        self.crawler = crawler
 
     @classmethod
     def from_crawler(self, crawler):
@@ -66,7 +85,8 @@ class FilterPipeline(object):
         userrank = crawler.settings.get('USER_RANK')
         return self(
                 filterlist = filename,
-                filteruserrank = userrank
+                filteruserrank = userrank,
+                crawler = crawler
                 )
 
     def open_spider(self, spider):
@@ -76,36 +96,52 @@ class FilterPipeline(object):
         self.filterlist = fh.read().splitlines()
         fh.close()
 
-    def process_url(self, url, item):
-        anchor = url.split('#')[1]
-        response = self.filter_opener.open(url)
+    @callback_args
+    def process_response(self, response, item):
+        anchor = item['url'].split('#')[1]
+        print("%s get anchor: %s" % (response.url, anchor))
 
-        doc = etree.HTML(response.read(), etree.HTMLParser(encoding="utf-8"))
-        div = doc.xpath('//a[@class="l_post_anchor" and @name="%s"]/following-sibling::div' % anchor)[0]
-        current_rank = div.xpath('//div[@class="d_badge_lv"]')
-        if current_rank is None:
-            raise DropItem("not replay form, drop it")
-        current_rank = current_rank[0]
-        current_rank = int(current_rank.text)
+        doc = lxml.etree.HTML(response.body, etree.HTMLParser(encoding="utf-8"))
+        try:
+            div = doc.xpath('//a[@class="l_post_anchor" and @name="%s"]/following-sibling::div//div[@class="d_badge_lv"]' % anchor)
+            current_rank = div[0]
+            current_rank = int(current_rank.text)
 
-        if(current_rank >= self.filteruserrank):
-            raise DropItem("found user rank(%d) >= USER_RANK(%d)" % (current_rank, self.filteruserrank))
+            if(current_rank >= self.filteruserrank):
+                raise DropItem("found user rank(%d) >= USER_RANK(%d)" % (current_rank, self.filteruserrank))
 
-        div = doc.xpath('//div[@id="post_content_%s"]' % anchor)[0]
+            div = doc.xpath('//div[@id="post_content_%s"]' % anchor)[0]
 
-        post_content = etree.tostring(div, method="text", encoding='utf-8').decode('utf-8')
-        post_content = html.unescape(post_content)
+            post_content = etree.tostring(div, method="text", encoding='utf-8').decode('utf-8')
+            post_content = html.unescape(post_content)
 
-        for key in self.filterlist:
-            if key in post_content:
-                raise DropItem("Filter keyword %s found in content, drop it" % key)
+            for key in self.filterlist:
+                if key in post_content:
+                    raise DropItem("Filter keyword %s found in content, drop it" % key)
 
-        for keyword in item['keywords']:
-            if keyword not in post_content:
-                raise DropItem("keyword %s not found in content, drop it" % key)
+            for keyword in item['keywords']:
+                if keyword not in post_content:
+                    raise DropItem("keyword %s not found in content, drop it" % keyword)
+        except DropItem as e:
+            logging.log(logging.INFO, "DropItem: %s" % e)
+        except IndexError:
+            logging.log(logging.INFO, "Not reply, drop it")
+        else:
+            finalitem = NoneItem()
+            finalitem.__dict__.update(item.__dict__)
+            return finalitem
 
     def process_item(self, item, spider):
-        content_url = item['url']
-        self.process_url(content_url, item)
-        return item
+        if isinstance(item, NoneItem):
+            return item
 
+        self.item = item
+        content_url = item['url']
+        self.crawler.engine.crawl(
+                Request(
+                    url = content_url,
+                    callback = self.process_response, meta={'item': item}
+                    ),
+                spider
+                )
+        raise DropItem

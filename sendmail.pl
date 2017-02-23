@@ -89,7 +89,7 @@ sub sendgrid_sendmail{
 	#say($cmd);
 }
 
-init();
+#init();
 open(my $FH, '<:encoding(UTF-8)', $path.$maillist) or die "failed open file";
 
 while(<$FH>){

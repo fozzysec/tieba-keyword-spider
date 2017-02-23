@@ -20,5 +20,7 @@ class ThreadItem(scrapy.Item):
     author = scrapy.Field()
     tieba = scrapy.Field()
     date = scrapy.Field()
+    keywords = scrapy.Field()
 
 class NoneItem(scrapy.Item):
+    pass

@@ -15,7 +15,7 @@ SPIDER_MODULES = ['tieba.spiders']
 NEWSPIDER_MODULE = 'tieba.spiders'
 
 FILENAME = 'items.jl'
-USER_RANK = 13
+USER_RANK = 12
 FILTERLIST = 'filterlist.conf'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'tieba (+http://www.yourdomain.com)'

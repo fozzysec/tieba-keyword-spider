@@ -17,6 +17,7 @@ class TiebaSpider(scrapy.Spider):
         keywords = keywords_string.split()
         if keywords is None:
             raise NotConfigured('Keyword not set')
+        self.keywords = keywords
         print('Current keywords:')
         for keyword in keywords:
             print("%s" % keyword)
@@ -71,6 +72,7 @@ class TiebaSpider(scrapy.Spider):
             item['author'] = '' if thread_author == None else thread_author
             item['tieba'] = '' if thread_tieba == None else thread_tieba
             item['date'] = '' if thread_date == None else thread_date
+            item['keywords'] = self.keywords
             yield item
 
         next_page = response.xpath('//a[@class="next"]/@href').extract_first()

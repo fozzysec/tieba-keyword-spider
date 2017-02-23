@@ -35,7 +35,9 @@ class TiebaPipeline(object):
             self.file.close()
 
     def process_item(self, item, spider):
-        line = json.dumps(dict(item)) + "\n"
+        data = dict(item)
+        del data['keywords']
+        line = json.dumps(data) + "\n"
         self.file.write(line.encode('utf-8'))
         return item
 
@@ -74,24 +76,36 @@ class FilterPipeline(object):
         self.filterlist = fh.read().splitlines()
         fh.close()
 
-    def process_url(self, url):
+    def process_url(self, url, item):
         anchor = url.split('#')[1]
         response = self.filter_opener.open(url)
+
         doc = etree.HTML(response.read(), etree.HTMLParser(encoding="utf-8"))
         div = doc.xpath('//a[@class="l_post_anchor" and @name="%s"]/following-sibling::div' % anchor)[0]
-        current_rank = div.xpath('//div[@class="d_badge_lv"]')[0]
+        current_rank = div.xpath('//div[@class="d_badge_lv"]')
+        if current_rank is None:
+            raise DropItem("not replay form, drop it")
+        current_rank = current_rank[0]
         current_rank = int(current_rank.text)
+
         if(current_rank >= self.filteruserrank):
             raise DropItem("found user rank(%d) >= USER_RANK(%d)" % (current_rank, self.filteruserrank))
+
         div = doc.xpath('//div[@id="post_content_%s"]' % anchor)[0]
+
         post_content = etree.tostring(div, method="text", encoding='utf-8').decode('utf-8')
         post_content = html.unescape(post_content)
+
         for key in self.filterlist:
             if key in post_content:
                 raise DropItem("Filter keyword %s found in content, drop it" % key)
 
+        for keyword in item['keywords']:
+            if keyword not in post_content:
+                raise DropItem("keyword %s not found in content, drop it" % key)
+
     def process_item(self, item, spider):
         content_url = item['url']
-        self.process_url(content_url)
+        self.process_url(content_url, item)
         return item
 

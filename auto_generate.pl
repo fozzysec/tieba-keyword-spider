@@ -47,7 +47,7 @@ while(<$fh>){
 	}
 	else{
 		foreach(@pid){
-			waitpid(WNOHANG);
+			waitpid($_, WNOHANG);
 		}
 	}
 }

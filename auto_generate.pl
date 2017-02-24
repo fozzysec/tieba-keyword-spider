@@ -33,8 +33,8 @@ while(<$fh>){
 	my $lv = $array[2];
 	my $filter = $array[3];
 
-	$counter++;
 	LOOP:
+	$counter++;
 	if($counter <= $workers){
 
 		$curr_pid = $pid[$counter - 1] = fork();

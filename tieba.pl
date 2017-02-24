@@ -35,6 +35,7 @@ while(<$FH>){
 	my $keyword = $array[0];
 	my $file = $array[2];
 
+	LOOP:
 	$counter++;
 	if($counter <= $workers){
 
@@ -53,6 +54,7 @@ while(<$FH>){
 			waitpid($_, WNOHANG);
 		}
 		$counter = 0;
+		goto LOOP;
 	}
 }
 

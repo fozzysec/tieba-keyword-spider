@@ -1,6 +1,7 @@
 *.jl
 __pycache__/
 *.py[cod]
-maillist.conf
-filterlist.conf
+*.conf
+filters/*
 append.html
+auto_generate.conf

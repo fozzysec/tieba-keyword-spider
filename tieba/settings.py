@@ -16,7 +16,7 @@ NEWSPIDER_MODULE = 'tieba.spiders'
 
 FILENAME = 'items.jl'
 USER_RANK = 12
-FILTERLIST = 'filterlist.conf'
+#FILTER = 'filterlist.conf'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'tieba (+http://www.yourdomain.com)'
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246'

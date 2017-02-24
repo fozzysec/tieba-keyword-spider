@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
 
+use utf8;
 use Cwd qw(abs_path);
 use File::Basename;
 use feature qw(say);

@@ -81,7 +81,7 @@ class FilterPipeline(object):
 
     @classmethod
     def from_crawler(self, crawler):
-        filename = crawler.settings.get('FILTERLIST')
+        filename = crawler.settings.get('FILTER')
         userrank = crawler.settings.get('USER_RANK')
         return self(
                 filterlist = filename,

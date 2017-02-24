@@ -76,7 +76,7 @@ class FilterPipeline(object):
         self.cookiejar = http.cookiejar.CookieJar()
         self.filter_opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(self.cookiejar))
         self.filterlistfilename = filterlist
-        self.filteruserrank = filteruserrank
+        self.filteruserrank = int(filteruserrank)
         self.crawler = crawler
 
     @classmethod

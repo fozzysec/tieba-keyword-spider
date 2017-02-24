@@ -34,6 +34,7 @@ while(<$fh>){
 	my $filter = $array[3];
 
 	$counter++;
+	LOOP:
 	if($counter <= $workers){
 
 		$curr_pid = $pid[$counter - 1] = fork();
@@ -50,6 +51,7 @@ while(<$fh>){
 		foreach(@pid){
 			waitpid($_, WNOHANG);
 		}
+		goto LOOP;
 	}
 }
 

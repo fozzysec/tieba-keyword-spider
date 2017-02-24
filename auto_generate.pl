@@ -51,6 +51,7 @@ while(<$fh>){
 		foreach(@pid){
 			waitpid($_, WNOHANG);
 		}
+		$counter = 0;
 		goto LOOP;
 	}
 }

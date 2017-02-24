@@ -30,14 +30,15 @@ while(<$fh>){
 	my @array = split(/:/);
 	my $id = $array[0];
 	my $keyword = $array[1];
-	my $filter = $array[2];
+	my $lv = $array[2];
+	my $filter = $array[3];
 
 	$counter++;
 	if($counter <= $workers){
 
 		$curr_pid = $pid[$counter - 1] = fork();
 		if($curr_pid == 0){
-			system("cd $path&&scrapy crawl tieba -s FILENAME=$tmpdir$id.jl -s FILTER=$path$filter -a keywords='$keyword'");
+			system("cd $path&&scrapy crawl tieba -s FILENAME=$tmpdir$id.jl -s USER_RANK=$lv -s FILTER=$path$filter -a keywords='$keyword'");
 			system("/usr/bin/env perl $path$generator $tmpdir$id.jl > $targetdir$id.html");
 			last;
 		}

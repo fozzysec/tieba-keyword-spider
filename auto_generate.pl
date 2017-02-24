@@ -37,7 +37,7 @@ while(<$fh>){
 
 		$curr_pid = $pid[$counter - 1] = fork();
 		if($curr_pid == 0){
-			system("cd $path&&scrapy crawl tieba -s FILENAME=$tmpdir$id.jl -s FILTER=$path$filter -a keywords = '$keyword'");
+			system("cd $path&&scrapy crawl tieba -s FILENAME=$tmpdir$id.jl -s FILTER=$path$filter -a keywords='$keyword'");
 			system("/usr/bin/env perl $path$generator $tmpdir$id.jl > $targetdir$id.html");
 			last;
 		}

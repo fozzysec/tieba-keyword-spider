@@ -41,6 +41,8 @@ class TiebaPipeline(object):
             self.file.close()
 
     def process_item(self, item, spider):
+        if isinstance(item, ThreadItem):
+            raise DropItem()
 
         data = dict(item)
         del data['keywords']
@@ -75,22 +77,22 @@ class FilterPipeline(object):
     def __init__(self, filterlist, filteruserrank, crawler):
         self.cookiejar = http.cookiejar.CookieJar()
         self.filter_opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(self.cookiejar))
-        self.filterlistfilename = filterlist
-        self.filteruserrank = int(filteruserrank)
+        self.filterlistname = filterlist
+        self.userrank = int(filteruserrank)
         self.crawler = crawler
 
     @classmethod
     def from_crawler(self, crawler):
-        filename = crawler.settings.get('FILTER')
+        filterlist = crawler.settings.get('FILTER')
         userrank = crawler.settings.get('USER_RANK')
         return self(
-                filterlist = filename,
+                filterlist = filterlist,
                 filteruserrank = userrank,
                 crawler = crawler
                 )
 
     def open_spider(self, spider):
-        fh = open(self.filterlistfilename, "r")
+        fh = open(self.filterlistname, "r")
         if fh is None:
             raise CloseSpider("Can not open filterlist")
         self.filterlist = fh.read().splitlines()
@@ -107,8 +109,8 @@ class FilterPipeline(object):
             current_rank = div[0]
             current_rank = int(current_rank.text)
 
-            if(current_rank >= self.filteruserrank):
-                raise DropItem("found user rank(%d) >= USER_RANK(%d)" % (current_rank, self.filteruserrank))
+            if(current_rank >= self.userrank):
+                raise DropItem("found user rank(%d) >= USER_RANK(%d)" % (current_rank, self.userrank))
 
             div = doc.xpath('//div[@id="post_content_%s"]' % anchor)[0]
 

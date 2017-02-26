@@ -6,6 +6,7 @@ use utf8;
 use File::stat;
 use Time::localtime;
 use File::Basename;
+use Try::Tiny;
 
 use open ':std', ':encoding(UTF-8)';
 
@@ -25,16 +26,20 @@ print("<table border='1'>\n");
 print("<tr><th>标题</th><th>作者</th><th>贴吧</th><th>预览</th><th>日期</th><th>地址</th></tr>\n");
 
 while(<$fh>){
-	chomp;
-	$json = JSON->new->utf8->decode($_);
-	print("<tr>\n");
-	print("<td>". $json->{'title'}.	"</td>\n");
-	print("<td>". $json->{'author'}.	"</td>\n");
-	print("<td>". $json->{'tieba'}.	"</td>\n");
-	print("<td>". $json->{'preview'}.	"</td>\n");
-	print("<td>", $json->{'date'}.	"</td>\n");
-	print("<td><a href=\"", $json->{'url'}.	"\" >link</a></td>\n");
-	print("</tr>\n");
+	try{
+		chomp;
+		$json = JSON->new->utf8->decode($_);
+		print("<tr>\n");
+		print("<td>". $json->{'title'}.	"</td>\n");
+		print("<td>". $json->{'author'}.	"</td>\n");
+		print("<td>". $json->{'tieba'}.	"</td>\n");
+		print("<td>". $json->{'preview'}.	"</td>\n");
+		print("<td>", $json->{'date'}.	"</td>\n");
+		print("<td><a href=\"", $json->{'url'}.	"\" >link</a></td>\n");
+		print("</tr>\n");
+	}catch{
+		next;
+	}
 }
 close($fh);
 open($append_fh, '<:encoding(UTF-8)', $path . "append.html") or die "can not read append file.";

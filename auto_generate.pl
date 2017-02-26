@@ -32,6 +32,7 @@ while(<$fh>){
 	my $keyword = $array[1];
 	my $lv = $array[2];
 	my $filter = $array[3];
+	my $mail = $array[4];
 
 	LOOP:
 	$counter++;
@@ -41,6 +42,7 @@ while(<$fh>){
 		if($curr_pid == 0){
 			system("cd $path&&scrapy crawl tieba -s FILENAME=$tmpdir$id.jl -s USER_RANK=$lv -s FILTER=$path$filter -a keywords='$keyword'");
 			system("/usr/bin/env perl $path$generator $tmpdir$id.jl > $targetdir$id.html");
+			system("mutt -e 'set content_type=text/html' -s '$keyword' $mail < $targetdir$id.html");
 			last;
 		}
 		else{

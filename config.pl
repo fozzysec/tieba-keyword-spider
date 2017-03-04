@@ -7,4 +7,5 @@ $g_sendgrid_enabled = 1;
 $g_gmail_enabled = 0;
 $g_generatelist = 'auto_generate.conf';
 $g_targetdir = '/tmp/';
+$g_sender = 'fozzy@fozzy.co';
 1;

@@ -17,6 +17,7 @@ my $maillist = $g_maillist;
 my $tmpdir = $g_tmpdir;
 my $sendgrid_enabled = $g_sendgrid_enabled;
 my $gmail_enabled = $g_gmail_enabled;
+my $sender = $g_sender;
 
 open(my $LOGGER, '>>:encoding(UTF-8)', "/var/log/tieba.log") or die "unable to open log file.";
 sub init{
@@ -93,7 +94,7 @@ sub sendgrid_sendmail{
 	print SENDGRID @origin_html;
 	close(HTML);
 	close(SENDGRID);
-	my $cmd = "msmtp -a sendgrid --from fozzy\@fozzy.co $to < $tmpdir$conf[2].sendgrid.html";
+	my $cmd = "msmtp -a sendgrid --from $sender $to < $tmpdir$conf[2].sendgrid.html";
 	system("$cmd");
 	#say($cmd);
 }

@@ -44,8 +44,8 @@ while(<$fh>){
 			system("/usr/bin/env perl $path$generator $tmpdir$id.jl > $targetdir$id.html");
 
 			foreach(split(/\|/, $mail)){
-				system("mutt -e 'set content_type=text/html' -s '$keyword' $mail < $targetdir$id.html");
-				say("mutt -e 'set content_type=text/html' -s '$keyword' $mail < $targetdir$id.html");
+				system("mutt -e 'set content_type=text/html' -s '$keyword' $_ < $targetdir$id.html");
+				say("mutt -e 'set content_type=text/html' -s '$keyword' $_ < $targetdir$id.html");
 			}
 
 			#terminate continue reading lines

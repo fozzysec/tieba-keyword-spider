@@ -12,7 +12,7 @@ no warnings 'experimental::smartmatch';
 
 $path = dirname(abs_path(__FILE__)).'/';
 require $path."config.pl";
-my $maillist = $g_maillist;
+my $maillist = $g_generatelist;
 
 my $outfilename = "$path$maillist.". UUID::Random::generate();
 open($fh, '<:encoding(UTF-8)', $path.$maillist) or die("cannot open maillist file: $path$maillist");
@@ -30,7 +30,7 @@ while(<$fh>){
 	next if /^(\s*(#.*)?)?$/;
 	my $counter = 0;
 	my @conf = split(':', $_);
-	my @keywords = split(' ', $conf[0]);
+	my @keywords = split(' ', $conf[1]);
 
 	foreach(@input_keywords){
 		$counter++ if($_ ~~ @keywords);
@@ -39,14 +39,14 @@ while(<$fh>){
 	if($counter == scalar @input_keywords && scalar @input_keywords == scalar @keywords){
 		say("found existing record at line: $., content is: $_");
 		$addflag = 0;
-		my @addresses = split(/\|/, $conf[1]);
+		my @addresses = split(/\|/, $conf[4]);
 		if( $mail ~~ @addresses){
 			say("duplicated email: $mail");
 			$dupflag = 1;
 			last;
 		}
 		say("appended to existing record");
-		$conf[1] = $conf[1].'|'.$mail;
+		$conf[4] = $conf[4].'|'.$mail;
 	}	
 	print $outfh join(':', @conf)."\n";
 }
@@ -54,8 +54,12 @@ close($fh);
 
 #none existing record
 if($addflag){
-	my @conf = @ARGV;
-	$conf[2] = crc32($conf[0]).".jl";
+	my @conf;
+	$conf[0] = crc32($ARGV[0]);
+	$conf[1] = $ARGV[0];
+	$conf[2] = 15;
+	$conf[3] = 'filters/none.conf';
+	$conf[4] = $mail;
 	print $outfh join(':', @conf)."\n";
 	say("added new record");
 }
